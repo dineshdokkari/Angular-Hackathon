@@ -2,9 +2,9 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { passwordStrength } from '../../validators/password-strength.validator';
-import { matchValidator } from '../../validators/match.validator';
+import { AuthService } from '../../services/auth.service';
+import { passwordStrength } from '../../../validators/password-strength.validator';
+import { matchValidator } from '../../../validators/match.validator';
  
 @Component({
   standalone: true,
