@@ -1,1 +1,62 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --primary: #3b82f6;
+  --danger: #ef4444;
+  --muted: #6b7280;
+  --bg: #0b1220;
+  --card: #0f172a;
+  --text: #e5e7eb;
+  --input: #1f2937;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  background: linear-gradient(180deg, var(--bg), #0e1527);
+  color: var(--text);
+  min-height: 100vh;
+}
+.container {
+  max-width: 420px;
+  margin: 8vh auto;
+  padding: 24px;
+  background: radial-gradient(1200px 400px at -10% -20%, rgba(59,130,246,.1), transparent),
+              radial-gradient(1200px 400px at 120% 120%, rgba(59,130,246,.12), transparent),
+              var(--card);
+  border: 1px solid rgba(148,163,184,.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.03);
+}
+h1, h2 { margin: 0 0 12px }
+h1 { font-size: 1.5rem }
+h2 { font-size: 1.25rem; color: #cbd5e1 }
+label { display: block; font-size: .9rem; color: #cbd5e1; margin-bottom: 6px }
+input {
+  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid transparent;
+  background: linear-gradient(#0b1220, #0b1220) padding-box,
+             linear-gradient(90deg, rgba(59,130,246,.4), rgba(14,165,233,.4)) border-box;
+  color: var(--text); outline: none;
+}
+input:focus { box-shadow: 0 0 0 3px rgba(59,130,246,.25) }
+.row { display: grid; gap: 14px; margin: 12px 0 }
+button {
+  width: 100%; padding: 12px 14px; border-radius: 12px; border: none; cursor: pointer;
+  background: linear-gradient(90deg, #2563eb, #06b6d4);
+  color: white; font-weight: 600; letter-spacing: .3px; box-shadow: 0 8px 20px rgba(59,130,246,.35);
+}
+button:disabled { opacity: .6; cursor: not-allowed }
+a { color: #93c5fd; text-decoration: none }
+.helper { color: var(--muted); font-size: .9rem }
+.error { color: var(--danger); font-size: .85rem }
+.card {
+  background: rgba(17, 24, 39, .5);
+  border: 1px solid rgba(148,163,184,.18);
+  border-radius: 16px; padding: 16px;
+}
+nav { display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:18px }
+.badge {
+  display:inline-block; padding:4px 10px; border-radius:999px; font-size:.75rem;
+  background: rgba(59,130,246,.15); border:1px solid rgba(59,130,246,.35); color:#bfdbfe;
+}
+hr { border: none; height: 1px; background: rgba(148,163,184,.2); margin: 16px 0 }
+small { color: #9ca3af }
