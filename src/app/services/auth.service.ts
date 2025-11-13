@@ -1,70 +1,122 @@
-import { Injectable, computed, signal } from '@angular/core';
+/**
+ * AuthService
+ * ------------
+ * This service:
+ * ✅ Stores access and refresh tokens
+ * ✅ Refreshes access tokens when expired
+ * ✅ Saves last visited route if user is logged out
+ * ✅ Redirects user after login to last visited page
+ */
+
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthState, Credentials, User } from '../Models/authmodel';
- 
-const LS_USERS = 'demo.users';
-const LS_AUTH = 'demo.auth';
- 
-function uid() { return Math.random().toString(36).slice(2, 10); }
- 
+import { BehaviorSubject, catchError, map, of, tap, throwError } from 'rxjs';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private state = signal<AuthState>(this.restoreAuth());
-  isAuthenticated = computed(() => !!this.state().token);
-  user = computed(() => this.state().user);
- 
-  constructor(private router: Router) {}
- 
-  // ---- Public API ----
-  async register(data: { name: string; email: string; password: string }): Promise<void> {
-    const users = this.getUsers();
-    if (users.some(u => u.email.toLowerCase() === data.email.toLowerCase())) {
-      throw new Error('Email already registered.');
-    }
-    const newUser: User = {
-      id: uid(),
-      name: data.name.trim(),
-      email: data.email.trim().toLowerCase(),
-      password: data.password, // NOTE: hash in real life
-      createdAt: new Date().toISOString()
-    };
-    users.push(newUser);
-    localStorage.setItem(LS_USERS, JSON.stringify(users));
-    await this.login({ email: newUser.email, password: newUser.password });
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
+  // We'll store tokens in localStorage
+  private ACCESS_KEY = 'access_token';
+  private REFRESH_KEY = 'refresh_token';
+  private LAST_ROUTE_KEY = 'last_route';
+
+  // Backend base URL
+  private API_URL = 'http://localhost:4000';
+
+  // Used by components to know login status
+  isLoggedIn$ = new BehaviorSubject<boolean>(!!this.getAccessToken());
+
+  /** Save tokens */
+  private setTokens(access: string, refresh: string) {
+    localStorage.setItem(this.ACCESS_KEY, access);
+    localStorage.setItem(this.REFRESH_KEY, refresh);
+    this.isLoggedIn$.next(true);
   }
- 
-  async login(creds: Credentials): Promise<void> {
-    const users = this.getUsers();
-    const match = users.find(
-      u => u.email === creds.email.trim().toLowerCase() && u.password === creds.password
+
+  /** Remove tokens (used for logout or expired sessions) */
+  private clearTokens() {
+    localStorage.removeItem(this.ACCESS_KEY);
+    localStorage.removeItem(this.REFRESH_KEY);
+    this.isLoggedIn$.next(false);
+  }
+
+  /** Get access token */
+  getAccessToken(): string | null {
+    return localStorage.getItem(this.ACCESS_KEY);
+  }
+
+  /** Get refresh token */
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.REFRESH_KEY);
+  }
+
+  /** Save last visited route before logout */
+  saveLastRoute(route: string) {
+    localStorage.setItem(this.LAST_ROUTE_KEY, route);
+  }
+
+  /** Get last visited route */
+  getLastRoute(): string | null {
+    return localStorage.getItem(this.LAST_ROUTE_KEY);
+  }
+
+  /** Clear last route (after redirect) */
+  clearLastRoute() {
+    localStorage.removeItem(this.LAST_ROUTE_KEY);
+  }
+
+  /** Signup API */
+  signup(name: string, email: string, password: string) {
+    return this.http.post<any>(`${this.API_URL}/signup`, { name, email, password }).pipe(
+      tap(res => this.setTokens(res.accessToken, res.refreshToken))
     );
-    if (!match) throw new Error('Invalid email or password.');
-    const token = 'demo-' + uid();
-    const auth: AuthState = { token, user: { id: match.id, name: match.name, email: match.email } };
-    this.state.set(auth);
-    localStorage.setItem(LS_AUTH, JSON.stringify(auth));
   }
- 
-  logout(): void {
-    this.state.set({ token: null, user: null });
-    localStorage.removeItem(LS_AUTH);
+
+  /** Login API */
+  login(email: string, password: string) {
+    return this.http.post<any>(`${this.API_URL}/login`, { email, password }).pipe(
+      tap(res => this.setTokens(res.accessToken, res.refreshToken))
+    );
+  }
+
+  /** Refresh access token using refresh token */
+  refreshAccessToken() {
+    const refresh = this.getRefreshToken();
+    if (!refresh) return of(null);
+
+    return this.http.post<any>(`${this.API_URL}/refresh`, { refreshToken: refresh }).pipe(
+      map(res => {
+        localStorage.setItem(this.ACCESS_KEY, res.accessToken);
+        return res.accessToken;
+      }),
+      catchError(err => {
+        // If refresh fails (token expired), logout user
+        this.logout(true);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  /** Logout user */
+  logout(expired = false) {
+    const currentRoute = this.router.url;
+
+    if (expired) {
+      // Save the route so we can bring them back later
+      this.saveLastRoute(currentRoute);
+    }
+
+    this.clearTokens();
     this.router.navigateByUrl('/login');
   }
- 
-  // ---- Helpers ----
-  private getUsers(): User[] {
-    try {
-      return JSON.parse(localStorage.getItem(LS_USERS) || '[]') as User[];
-    } catch {
-      return [];
-    }
+
+  /** Check if user is currently logged in (used by auth.guard) */
+  isAuthenticated(): boolean {
+    return !!this.getAccessToken();
   }
- 
-  private restoreAuth(): AuthState {
-    try {
-      return JSON.parse(localStorage.getItem(LS_AUTH) || 'null') || { token: null, user: null };
-    } catch {
-      return { token: null, user: null };
-    }
-  }
+
+
 }

@@ -1,31 +1,30 @@
- <div class="container">
-    <nav>
-      <div><span class="badge">Auth Starter</span></div>
-      <a routerLink="/signup">Sign up</a>
-    </nav>
- 
-    <h1>Welcome back</h1>
-    <p class="helper">Log in to continue</p>
- 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row">
-      <div>
-        <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" placeholder="you@example.com" />
-        <div class="error" *ngIf="submitted && form.controls.email.invalid">
-          Please enter a valid email.
-        </div>
+<div class="container">
+  <nav>
+    <!-- <div><span class="badge"></span></div> -->
+    <!-- <a routerLink="/signup">Sign up</a> -->
+  </nav>
+
+  <h1>Welcome</h1>
+  <p class="helper">Log in to continue</p>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row">
+    <div>
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="you@example.com" />
+      <div class="error" *ngIf="submitted && form.controls.email.invalid">
+        Please enter a valid email.
       </div>
- 
-      <div>
-        <label for="password">Password</label>
-        <input id="password" type="password" formControlName="password" placeholder="••••••••" />
-        <div class="error" *ngIf="submitted && form.controls.password.invalid">
-          Password is required.
-        </div>
+    </div>
+
+    <div>
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password" placeholder="••••••••" />
+      <div class="error" *ngIf="submitted && form.controls.password.invalid">
+        Password is required.
       </div>
- 
-      <button type="submit" [disabled]="form.invalid">Log in</button>
-    </form>
- 
-    <small>Don't have an account? <a routerLink="/signup">Create one</a></small>
-  </div>
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">Log in</button>
+  </form>
+  <small>Don't have an account? <a routerLink="/signup">Create one</a></small>
+</div>

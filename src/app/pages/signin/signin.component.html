@@ -1,36 +1,36 @@
-  <div class="container">
-    <nav>
-      <div><span class="badge">Auth Starter</span></div>
-      <a routerLink="/login">Log in</a>
-    </nav>
-    <h1>Create your account</h1>
-    <p class="helper">Use a strong password (8+ chars, upper/lower/number)</p>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row">
-      <div>
-        <label for="name">Full name</label>
-        <input id="name" type="text" formControlName="name" placeholder="Ada Lovelace" />
-        <div class="error" *ngIf="submitted && form.controls.name.invalid">Name is required.</div>
+<div class="container">
+  <nav>
+    <!-- <div><span class="badge">Auth Starter</span></div>
+      <a routerLink="/login">Log in</a> -->
+  </nav>
+  <h1>Create your account</h1>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="row">
+    <div>
+      <label for="name">Full name</label>
+      <input id="name" type="text" formControlName="name" placeholder="Ada Lovelace" />
+      <div class="error" *ngIf="submitted && form.controls.name.invalid">Name is required.</div>
+    </div>
+    <div>
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="you@example.com" />
+      <div class="error" *ngIf="submitted && form.controls.email.invalid">Valid email required.</div>
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password" placeholder="••••••••" />
+      <div class="error" *ngIf="submitted && form.controls.password.errors?.['weakPassword']">
+        Password must be 8+ chars and include upper, lower, and a number.
       </div>
-      <div>
-        <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" placeholder="you@example.com" />
-        <div class="error" *ngIf="submitted && form.controls.email.invalid">Valid email required.</div>
+      <p class="helper">Use a strong password (8+ chars, upper/lower/number)</p>
+    </div>
+    <div>
+      <label for="confirm">Confirm password</label>
+      <input id="confirm" type="password" formControlName="confirm" placeholder="Repeat password" />
+      <div class="error" *ngIf="submitted && form.controls.confirm.errors?.['mismatch']">
+        Passwords do not match.
       </div>
-      <div>
-        <label for="password">Password</label>
-        <input id="password" type="password" formControlName="password" placeholder="••••••••" />
-        <div class="error" *ngIf="submitted && form.controls.password.errors?.['weakPassword']">
-          Password must be 8+ chars and include upper, lower, and a number.
-        </div>
-      </div>
-      <div>
-        <label for="confirm">Confirm password</label>
-        <input id="confirm" type="password" formControlName="confirm" placeholder="Repeat password" />
-        <div class="error" *ngIf="submitted && form.controls.confirm.errors?.['mismatch']">
-          Passwords do not match.
-        </div>
-      </div>
-      <button type="submit" [disabled]="form.invalid">Create account</button>
-    </form>
-    <small>Already have an account? <a routerLink="/login">Log in</a></small>
-  </div>
+    </div>
+    <button type="submit" [disabled]="form.invalid">Create account</button>
+  </form>
+  <small>Already have an account? <a routerLink="/login">Log in</a></small>
+</div>

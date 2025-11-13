@@ -13,7 +13,7 @@ import { matchValidator } from '../../../validators/match.validator';
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.css'
 })
-export class SignupComponent {
+export class SigninComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
  
@@ -31,7 +31,11 @@ export class SignupComponent {
     if (this.form.invalid) return;
     try {
       const { name, email, password } = this.form.getRawValue();
-      await this.auth.register({ name: name!, email: email!, password: password! });
+      this.auth.signup(name!, email!, password!).subscribe({
+        next: () => location.href = '/home',
+        error: err => alert(err.error?.message || 'Signup failed')
+      });
+
       location.href = '/home';
     } catch (e: any) {
       alert(e.message || 'Signup failed');

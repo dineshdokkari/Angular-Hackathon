@@ -1,39 +1,53 @@
+/**
+ * Login Component
+ * ---------------
+ * ✅ Handles user login
+ * ✅ Redirects to last visited route (if available)
+ * ✅ Clears old route after successful redirect
+ */
+
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
- 
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
+  private router = inject(Router);
   private auth = inject(AuthService);
- 
+
   submitted = false;
- 
-  // ✅ use nonNullable form so fields are typed as string
-  form = this.fb.nonNullable.group({
+
+  form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
   });
- 
-  async onSubmit() {
+
+  onSubmit() {
     this.submitted = true;
     if (this.form.invalid) return;
- 
-    const creds = this.form.getRawValue(); // now { email: string, password: string }
- 
-    try {
-      await this.auth.login(creds);
-      location.href = '/home';
-    } catch (e: any) {
-      alert(e.message || 'Login failed');
-    }
+
+    const { email, password } = this.form.value;
+
+    this.auth.login(email!, password!).subscribe({
+      next: () => {
+        // Redirect to saved route or home
+        const last = this.auth.getLastRoute();
+        if (last) {
+          this.router.navigateByUrl(last);
+          this.auth.clearLastRoute();
+        } else {
+          this.router.navigateByUrl('/home');
+        }
+      },
+      error: err => alert(err.error?.message || 'Login failed'),
+    });
   }
 }
