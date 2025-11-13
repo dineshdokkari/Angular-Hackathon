@@ -10,7 +10,8 @@ import { matchValidator } from '../../../validators/match.validator';
   standalone: true,
   selector: 'app-signup',
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  template: `./signin.component.html`
+  templateUrl: './signin.component.html',
+  styleUrl: './signin.component.css'
 })
 export class SignupComponent {
   private fb = inject(FormBuilder);
