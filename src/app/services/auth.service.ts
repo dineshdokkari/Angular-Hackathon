@@ -24,7 +24,7 @@ export class AuthService {
   private LAST_ROUTE_KEY = 'last_route';
 
   // Backend base URL
-  private API_URL = 'http://localhost:4000';
+  private API_URL = 'https://localhost:7197';
 
   // Used by components to know login status
   isLoggedIn$ = new BehaviorSubject<boolean>(!!this.getAccessToken());
@@ -76,8 +76,9 @@ export class AuthService {
   }
 
   /** Login API */
-  login(email: string, password: string) {
-    return this.http.post<any>(`${this.API_URL}/login`, { email, password }).pipe(
+  login(userName: string, password: string) {
+    debugger;
+    return this.http.post<any>(`${this.API_URL}/api/Auth/login`, { userName, password }).pipe(
       tap(res => this.setTokens(res.accessToken, res.refreshToken))
     );
   }

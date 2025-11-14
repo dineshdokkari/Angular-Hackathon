@@ -31,6 +31,7 @@ export class LoginComponent {
   });
 
   onSubmit() {
+    debugger;
     this.submitted = true;
     if (this.form.invalid) return;
 
@@ -38,6 +39,7 @@ export class LoginComponent {
 
     this.auth.login(email!, password!).subscribe({
       next: () => {
+        debugger;
         // Redirect to saved route or home
         const last = this.auth.getLastRoute();
         if (last) {
