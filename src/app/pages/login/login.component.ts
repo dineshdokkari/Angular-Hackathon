@@ -36,8 +36,9 @@ export class LoginComponent {
     if (this.form.invalid) return;
 
     const { email, password } = this.form.value;
+    let key = this.generateKey(password);
 
-    this.auth.login(email!, password!).subscribe({
+    this.auth.login(email!, key!).subscribe({
       next: () => {
         debugger;
         // Redirect to saved route or home
@@ -51,5 +52,10 @@ export class LoginComponent {
       },
       error: err => alert(err.error?.message || 'Login failed'),
     });
+  }
+  generateKey(key: any) {
+    const password = key;
+    const encryptedPassword = window.btoa(password);
+    return encryptedPassword;
   }
 }
