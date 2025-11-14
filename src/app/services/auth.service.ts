@@ -70,7 +70,7 @@ export class AuthService {
 
   /** Signup API */
   signup(name: string, email: string, password: string) {
-    return this.http.post<any>(`${this.API_URL}/signup`, { name, email, password }).pipe(
+    return this.http.post<any>(`${this.API_URL}/api/Auth/signup`, { name, email, password }).pipe(
       tap(res => this.setTokens(res.accessToken, res.refreshToken))
     );
   }

@@ -31,7 +31,8 @@ export class SigninComponent {
     if (this.form.invalid) return;
     try {
       const { name, email, password } = this.form.getRawValue();
-      this.auth.signup(name!, email!, password!).subscribe({
+      let key = this.generateKey(password);
+      this.auth.signup(name!, email!, key!).subscribe({
         next: () => location.href = '/home',
         error: err => alert(err.error?.message || 'Signup failed')
       });
@@ -40,6 +41,11 @@ export class SigninComponent {
     } catch (e: any) {
       alert(e.message || 'Signup failed');
     }
+  }
+  generateKey(key: any) {
+    const password = key;
+    const encryptedPassword = window.btoa(password);
+    return encryptedPassword;
   }
 }
  
